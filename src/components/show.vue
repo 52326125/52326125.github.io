@@ -1,5 +1,9 @@
 <template>
-  <v-container>
+  <v-container 
+     v-touch="{
+        left: () => preNextQuestion(true),
+        right: () => preNextQuestion(false)
+      }">
     <v-row>
       <v-col class="d-flex justify-center" cols="12">
         <v-dialog v-model="dialog" width="50%">
@@ -32,12 +36,17 @@
               class=" d-flex justify-center"
               v-for="(item, index) in ans"
               :key="index">
-              <span class="black--text" v-if="questionDecode[number].trueAns.includes(index.toString())">{{questionDecode[number][item]}}</span>
-              <span class="red--text" v-else>{{questionDecode[number][item]}}</span>
+              <span class="red--text" v-if="questionDecode[number].trueAns.includes(index.toString())">{{questionDecode[number][item]}}</span>
+              <span class="black--text" v-else>{{questionDecode[number][item]}}</span>
             </div>
           </v-card-text>
+          <v-card-actions class=" d-flex justify-center">
+            <v-btn @click="preNextQuestion(false)">上一題</v-btn>
+            <v-btn @click="preNextQuestion(true)">下一題</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
+      {{number}}
     </v-row>
   </v-container>
 </template>
@@ -67,6 +76,14 @@ export default {
     changeQuestion: function(index){
       this.number = index
       this.dialog = false
+    },
+    preNextQuestion: function(action){
+      console.log(action)
+      if(action){
+        (this.number < this.questionDecode.length - 1) ? this.number++ : this.number
+      }else{
+        (this.number > 0) ? this.number-- : this.number
+      }
     }
   }
 }

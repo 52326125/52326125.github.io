@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    
+    製作中...
   </v-container>
 </template>
 
