@@ -46,7 +46,6 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      {{number}}
     </v-row>
   </v-container>
 </template>
