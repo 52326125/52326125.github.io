@@ -5,14 +5,14 @@
     </v-card-subtitle>
     <v-card-title class="d-flex justify-center">
       <span class="font-weight-bold">{{questionDecode[quizNumber].question}}</span>
-      <span class="red--text" v-if="questionDecode[quizNumber].trueAns.length > 1">(複選)</span>
+      <span class="red--text" v-if="isMultiple">(複選)</span>
     </v-card-title>
     <v-card-text class="font-weight-bold">
       <v-btn-toggle
         class=" d-flex justify-center"
         style="flex-direction: column;"
         v-model="ansBtn"
-        multiple>
+        :multiple="isMultiple">
         <v-btn 
           v-for="(item, index) in ans" 
           :key="index" 
@@ -54,6 +54,9 @@ export default {
     ...mapState([
       'question'
     ]),
+    isMultiple(){
+      return this.questionDecode[this.quizNumber].trueAns.length > 1
+    },
     questionDecode(){
       let temp = this.question
       temp.forEach(item => {
@@ -66,7 +69,11 @@ export default {
     },
     testColor(){
       let temp = Object.assign([], this.textColor)
-      this.ansBtn.forEach(item => temp[parseInt(item)] = 'blue')
+      if(Array.isArray(this.ansBtn)){
+        this.ansBtn.forEach(item => temp[parseInt(item)] = 'blue')
+      }else{
+        temp[this.ansBtn] = 'blue'
+      }
       if(this.showAns) this.questionDecode[this.quizNumber].trueAns.forEach(item => temp[parseInt(item)] = 'red')
       return temp
     }
@@ -75,8 +82,8 @@ export default {
     answer: function(){
       this.showAns = true
       let trueAns = this.questionDecode[this.quizNumber].trueAns
-      let ans = this.ansBtn.sort()
-      if(trueAns.every(item => trueAns.length == ans.length && ans.includes(parseInt(item)))) this.score += 100 / this.number
+      let ans = [].concat(Array.isArray(this.ansBtn) ? this.ansBtn.sort() : this.ansBtn)
+      if(trueAns.every(item => trueAns.length == (ans.length || 1) && ans.includes(parseInt(item)))) this.score += 100 / this.number
     },
     quizNext: function(){
       if(this.quizNumber < this.questionDecode.length - 1){
